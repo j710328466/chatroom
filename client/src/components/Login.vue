@@ -35,11 +35,15 @@ export default {
         that.topPopup = true
         return
       }
-      socket.emit('login', {name: that.name})
+      socket.emit('login', {
+        name: that.name,
+        avatar: that.$store.state.avatarUrl
+      })
       socket.once('login', function (data) {
         if (data.status === 'ok') {
           that.attentionText = '登录成功'
           localStorage.setItem('avatar', that.$store.state.avatarUrl)
+          localStorage.setItem('name', that.name)
           setTimeout(() => {
             that.$router.push('chatroom')
           }, 1500)
