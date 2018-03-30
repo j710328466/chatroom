@@ -38,4 +38,16 @@ export default {
   max-width: 375px;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .1);
 }
+.ml-10 {
+  margin-left: 10px;
+}
+.mr-10 {
+  margin-right: 10px;
+}
+.ml-40 {
+  margin-left: 40px;
+}
+.mr-40 {
+  margin-right: 40px;
+}
 </style>

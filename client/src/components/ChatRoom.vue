@@ -1,16 +1,16 @@
 <template>
   <mu-paper class="chatroom" :zDepth="2">
     <mu-drawer :open="barIsOpen" :docked=true @close="toggleBar">
-      <mu-list>
-        <mu-list-item title="Menu Item 1"/>
-        <mu-list-item title="Menu Item 2"/>
-        <mu-list-item title="Menu Item 3"/>
+      <mu-list v-for="(menber, index) of menbers" :key="index">
+        <mu-list-item :title="menber.name">
+          <mu-avatar :src="menber.avatar" slot="leftAvatar"/>
+        </mu-list-item>
       </mu-list>
     </mu-drawer>
-    <mu-appbar title="chatroom">
+    <mu-appbar :title="name">
       <mu-avatar slot="left" :src="avatar"/>
       <mu-flat-button @click="toggleBar" slot="right" >
-        人数：{{menber}}
+        人数：{{menberNum}}
       </mu-flat-button>
     </mu-appbar>
     <div class="main">
@@ -18,12 +18,20 @@
         <mu-content-block>
           <div class="chatCont">
             <mu-avatar :src="item.avatar" />
-            <mu-paper class="cont" :zDepth="1">
+            <mu-paper class="cont mr-40 ml-10" :zDepth="1">
               {{item.mess}}
             </mu-paper>
           </div>
         </mu-content-block>
       </div>
+      <mu-content-block>
+          <div class="chatCont">
+            <mu-paper class="cont ml-40 mr-10" :zDepth="1">
+              {{name}}
+            </mu-paper>
+            <mu-avatar :src="avatar" />
+          </div>
+        </mu-content-block>
     </div>
     <div class="mess">
       <mu-text-field class="mess-input" v-model="mess" hintText="请输入" />
@@ -40,16 +48,25 @@ export default {
     return {
       avatar: '',
       name: '未知用户',
-      menber: 1,
+      menberNum: 1,
+      menbers: [
+        {name: '12', avatar: ''},
+        {name: '122', avatar: ''}
+      ],
       barIsOpen: false,
-      items: [],
+      items: [
+        {name: '', data: '', joy: '', mess: '', avatar: ''}
+      ],
       mess: '',
       emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️', '🇨🇳'],
     }
   },
   created: function () {
-    if (localStorage.getItem('avatar')) {
-      this.avatar = localStorage.getItem('avatar')
+    let that = this
+    if (that._getLocal('name')) {
+      that.avatar = that._getLocal('avatar')
+      that.name = that._getLocal('name')
+      socket.emit('login', {name: that.name})
     }
   },
   mounted: function () {
@@ -62,6 +79,11 @@ export default {
   updated: function () {
   },
   methods: {
+    _getLocal: function (item) {
+      if (localStorage.getItem(item)) {
+        return localStorage.getItem(item)
+      }
+    },
     toggleBar: function () {
       this.barIsOpen = !this.barIsOpen
     },
@@ -98,7 +120,6 @@ export default {
       .chatCont
         display flex
         .cont
-          margin 10px
           padding 10px
           flex 1
           word-wrap break-word

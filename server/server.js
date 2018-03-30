@@ -45,24 +45,24 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('message', data)
   })
 
-  // socket.on('disconnect', function () {
-  //   let index = users.indexOf(socket.nickName)
+  socket.on('disconnect', function () {
+    let index = users.indexOf(socket.nickName)
     
-  //   if (index >= 0) {
-  //     users.splice(index, 1)
-  //   }
+    if (index >= 0) {
+      users.splice(index, 1)
+    }
 
-  //   // 离开房间通知
-  //   io.emit('sys', {
-  //     text: socket.nickName + '离开了房间',
-  //     count: users.length,
-  //     users: users
-  //   })
-  //   console.log(socket.nickName + '离开了房间')
-  //   console.log('当前用户', users)
-  // })
+    // 离开房间通知
+    io.emit('sys', {
+      text: socket.nickName + '离开了房间',
+      count: users.length,
+      users: users
+    })
+    console.log(socket.nickName + '离开了房间')
+    console.log('当前用户', users)
+  })
 })
 
 http.listen(PORT, function () {
   console.log('socket is listening on port: ' + PORT)
-})
+});
