@@ -122,7 +122,9 @@ export default {
       this.emojiShow = true
     },
     emojiClose: function (emoji) {
-      this.inputMess = this.$refs.inputMess.value + emoji
+      if (emoji !== 'overlay') {
+        this.inputMess = this.$refs.inputMess.value + emoji
+      }
       this.$refs.inputMess.focus()
       this.emojiShow = false
     },

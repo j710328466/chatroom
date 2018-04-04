@@ -1,11 +1,11 @@
 
 const express = require('express')
 const path = require('path')
+const filterKeywords = require('./utils/filter')
+
 const app = express()
 const http = require('http').Server(app)
-
 const io = require('socket.io')(http)
-
 const PORT = process.env.PORT || 3000
 var users = []
 
@@ -39,6 +39,7 @@ io.on('connection', function (socket) {
 
   // 用户发送消息
   socket.on('message', function (data) {
+    // let newData = filterKeywords(data)
     socket.broadcast.emit('message', data)
   })
 
