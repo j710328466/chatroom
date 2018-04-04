@@ -14,7 +14,7 @@ export default new Router({
       component: Login
     }, {
       path: '/chatroom',
-      name: 'ChatRoom',
+      name: 'chatroom',
       component: ChatRoom
     }, {
       path: '/notfind',

@@ -25,14 +25,14 @@ io.on('connection', function (socket) {
       socket.nickName = data.name
       console.log(data.name + '进入了房间')
       console.log('当前用户:', users)
-      io.emit('sys', {
-        text: socket.nickName + '进入了房间',
-        count: users.length,
-        users: users
-      })
       socket.emit('login', {
         status: 'ok',
         text: '登录成功'
+      })
+      socket.emit('sys', {
+        text: socket.nickName + '进入了房间',
+        count: users.length,
+        users: users
       })
     }
   })
@@ -72,5 +72,5 @@ function findIndex (obj, item) {
 }
 
 http.listen(PORT, function () {
-  console.log('socket is listening on port: ' + PORT)
+  console.log('socket is running at port: ' + PORT)
 });

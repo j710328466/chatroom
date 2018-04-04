@@ -18,6 +18,9 @@ export default {
 </script>
 
 <style>
+ul li {
+  list-style: none;
+}
 .container {
   position: relative;
   margin: auto;

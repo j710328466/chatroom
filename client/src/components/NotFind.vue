@@ -11,6 +11,11 @@ export default {
   data () {
     return {
     }
+  },
+  mounted: function () {
+    setInterval(() => {
+      this.$router.push('/')
+    }, 1500)
   }
 }
 </script>

@@ -1,19 +1,30 @@
 <template>
   <transition name="fade">
-    <mu-paper class="chatroom" :zDepth="2">
+    <mu-paper class="chatroom" :zDepth="2" ref="chatroom">
+      <!-- emoji表情 -->
+      <mu-bottom-sheet :open="emojiShow" @close="emojiClose">
+        <ul class="emojis">
+          <li class="emoji" v-for="(emoji, index) of emojis" :key="index" @click="emojiClose(emoji)">
+            {{emoji}}
+          </li>
+        </ul>
+      </mu-bottom-sheet>
+      <!-- 成员统计 -->
       <mu-drawer :open="barIsOpen" :docked=true @close="toggleBar">
-        <mu-list v-for="(menber, index) of menbers.users" :key="index">
-          <mu-list-item :title="menber.name">
-            <mu-avatar :src="menber.avatar" slot="leftAvatar"/>
+        <mu-list v-for="(user, index) of users" :key="index">
+          <mu-list-item :title="user.name">
+            <mu-avatar :src="user.avatar" slot="leftAvatar"/>
           </mu-list-item>
         </mu-list>
       </mu-drawer>
+      <!-- 头部 -->
       <mu-appbar title="我就是个聊天室">
         <mu-avatar slot="left" :src="avatar"/>
         <mu-flat-button @click="toggleBar" slot="right" >
-          人数：{{menbers.count || 1}}
+          人数：{{users.length || 1}}
         </mu-flat-button>
       </mu-appbar>
+      <!-- 聊天框 -->
       <div id="main" class="main" >
         <div v-for="(msg, index) of msgs" :key="index">
           <mu-content-block v-if="!msg.self">
@@ -42,9 +53,10 @@
           </mu-content-block>
         </div>
       </div>
-      <div class="mess">
-        <mu-text-field class="mess-input" v-model="inputMess" hintText="请输入" />
-        <mu-icon-button icon="M"/>
+      <!-- 输入框 -->
+      <div class="mess" ref="input">
+        <mu-text-field class="mess-input" @focus="focusIn" v-model="inputMess" ref="inputMess" hintText="请输入" />
+        <mu-icon-button @click="showEmoji" icon="M"/>
         <mu-raised-button class="mess-send" @click="sendMess" label="发送"  primary />
       </div>
     </mu-paper>
@@ -58,11 +70,12 @@ export default {
     return {
       avatar: '',
       name: '未知用户',
-      menbers: '',
+      users: [],
       barIsOpen: false,
       msgs: (localStorage.msgs && JSON.parse(localStorage.msgs)) || [],
       inputMess: '',
       emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹', '⚡️', '🔥', '🌈', '🍏', '⚽️', '❤️', '🇨🇳'],
+      emojiShow: false,
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -76,6 +89,7 @@ export default {
     let that = this
     that.avatar = that._getLocal('avatar')
     that.name = that._getLocal('name')
+    that.users = JSON.parse(that._getLocal('users'))
     if (that._getLocal('name')) {
       socket.emit('login', {
         name: that.name,
@@ -99,13 +113,19 @@ export default {
       setTimeout(() => {
         that.oContent.scrollTop = that.oContent.scrollHeight
       }, 0)
-      that.menbers = data
+      localStorage.setItem('users', JSON.stringify(data.users))
+      that.users = JSON.parse(that._getLocal('users'))
     })
   },
-  updated: function () {
-    console.log(document.body.scrollHeight)
-  },
   methods: {
+    showEmoji: function () {
+      this.emojiShow = true
+    },
+    emojiClose: function (emoji) {
+      this.inputMess = this.$refs.inputMess.value + emoji
+      this.$refs.inputMess.focus()
+      this.emojiShow = false
+    },
     _getLocal: function (item) {
       if (localStorage.getItem(item)) {
         return localStorage.getItem(item)
@@ -113,6 +133,11 @@ export default {
     },
     toggleBar: function () {
       this.barIsOpen = !this.barIsOpen
+    },
+    focusIn: function () {
+      setTimeout(() => {
+        document.body.scrollTop = document.body.scrollHeight
+      }, 300)
     },
     sendMess: function () {
       if (!this.inputMess) {
@@ -137,11 +162,11 @@ export default {
         this.oContent.scrollTop = this.oContent.scrollHeight
       }, 0)
       this.inputMess = ''
+      this.$refs.inputMess.focus()
     }
   },
   watch: {
     msgs (val) {
-      console.log(val)
       localStorage.msgs = JSON.stringify(val)
       setTimeout(() => {
         this.oContent.scrollTop = this.oContent.scrollHeight
@@ -163,6 +188,12 @@ export default {
     transition opacity 1s
   .fade-enter,.fade-leave-to
     opacity 0
+  .emojis
+    margin 0
+    padding 5px
+    .emoji
+      float left
+      width 10%
   .chatroom
     display flex
     position relative
@@ -193,4 +224,7 @@ export default {
         margin-bottom 0
       .mess-emoji
         width 50px
+    .focus
+      position absolute
+      bottom 0
 </style>
