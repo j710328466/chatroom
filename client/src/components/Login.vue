@@ -33,7 +33,7 @@ export default {
     login: function () {
       let that = this
       if (!that.name) {
-        that.attentionText = '再检查一下吧~'
+        that.attentionText = '请给自己取个昵称~'
         that.topPopup = true
         return
       }
@@ -43,16 +43,15 @@ export default {
       })
       socket.once('login', function (data) {
         if (data.status === 'ok') {
-          console.log('1')
           that.attentionText = '登录成功'
           localStorage.setItem('avatar', that.$store.state.avatarUrl)
           localStorage.setItem('name', that.name)
-          socket.on('sys', function (e) {
-            localStorage.setItem('users', JSON.stringify(e.users))
-            setTimeout(() => {
-              that.$router.push({name: 'chatroom', params: { e }})
-            }, 1500)
-          })
+          setTimeout(() => {
+            that.$router.push({name: 'chatroom', params: { e: data }})
+          }, 1000)
+          // socket.on('sys', function (e) {
+          //   localStorage.setItem('users', JSON.stringify(e.users))
+          // })
         } else {
           that.attentionText = data.text
         }
