@@ -86,19 +86,18 @@ export default {
     }
   },
   created: function () {
-    let that = this
-    that.avatar = that._getLocal('avatar')
-    that.name = that._getLocal('name')
-    that.users = JSON.parse(that._getLocal('users'))
-    if (that._getLocal('name')) {
-      socket.emit('login', {
-        name: that.name,
-        avatar: that._getLocal('avatar')
-      })
-    }
   },
   mounted: function () {
     const that = this
+    that.avatar = that._getLocal('avatar')
+    that.name = that._getLocal('name')
+    if (that._getLocal('name')) {
+      that.users = JSON.parse(that._getLocal('users'))
+      socket.emit('login', {
+        name: that.name,
+        avatar: that.avatar
+      })
+    }
     this.oContent = document.querySelector('#main')
     this.oContent.scrollTop = this.oContent.scrollHeight
     socket.on('message', function (data) {
