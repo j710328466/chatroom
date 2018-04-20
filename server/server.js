@@ -29,7 +29,7 @@ io.on('connection', function (socket) {
         status: 'ok',
         text: '登录成功'
       })
-      socket.emit('sys', {
+      socket.broadcast.emit('sys', {
         text: socket.nickName + '进入了房间',
         count: users.length,
         users: users

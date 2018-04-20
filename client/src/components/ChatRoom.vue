@@ -10,7 +10,7 @@
         </ul>
       </mu-bottom-sheet>
       <!-- 成员统计 -->
-      <mu-drawer :open="barIsOpen" :docked=true @close="toggleBar">
+      <mu-drawer :open="barIsOpen" :docked="false" @close="toggleBar">
         <mu-list v-for="(user, index) of users" :key="index">
           <mu-list-item :title="user.name">
             <mu-avatar :src="user.avatar" slot="leftAvatar"/>
@@ -113,8 +113,7 @@ export default {
       setTimeout(() => {
         that.oContent.scrollTop = that.oContent.scrollHeight
       }, 0)
-      localStorage.setItem('users', JSON.stringify(data.users))
-      that.users = JSON.parse(that._getLocal('users'))
+      that.users = data.users
     })
   },
   methods: {
@@ -139,7 +138,7 @@ export default {
     focusIn: function () {
       setTimeout(() => {
         document.body.scrollTop = document.body.scrollHeight
-      }, 300)
+      }, 500)
     },
     sendMess: function () {
       if (!this.inputMess) {
